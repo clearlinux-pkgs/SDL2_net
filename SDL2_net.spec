@@ -4,7 +4,7 @@
 #
 Name     : SDL2_net
 Version  : 2.0.1
-Release  : 4
+Release  : 5
 URL      : https://www.libsdl.org/projects/SDL_net/release/SDL2_net-2.0.1.tar.gz
 Source0  : https://www.libsdl.org/projects/SDL_net/release/SDL2_net-2.0.1.tar.gz
 Summary  : SDL portable network library
@@ -35,14 +35,15 @@ lib components for the SDL2_net package.
 
 
 %prep
-cd ..
 %setup -q -n SDL2_net-2.0.1
 
 %build
+export LANG=C
 %configure --disable-static
 make V=1  %{?_smp_mflags}
 
 %check
+export LANG=C
 export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost
@@ -58,9 +59,10 @@ rm -rf %{buildroot}
 %files dev
 %defattr(-,root,root,-)
 /usr/include/SDL2/SDL_net.h
-/usr/lib64/*.so
-/usr/lib64/pkgconfig/*.pc
+/usr/lib64/libSDL2_net.so
+/usr/lib64/pkgconfig/SDL2_net.pc
 
 %files lib
 %defattr(-,root,root,-)
-/usr/lib64/*.so.*
+/usr/lib64/libSDL2_net-2.0.so.0
+/usr/lib64/libSDL2_net-2.0.so.0.0.1
