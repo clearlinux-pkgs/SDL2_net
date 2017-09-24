@@ -4,7 +4,7 @@
 #
 Name     : SDL2_net
 Version  : 2.0.1
-Release  : 7
+Release  : 8
 URL      : https://www.libsdl.org/projects/SDL_net/release/SDL2_net-2.0.1.tar.gz
 Source0  : https://www.libsdl.org/projects/SDL_net/release/SDL2_net-2.0.1.tar.gz
 Summary  : SDL portable network library
