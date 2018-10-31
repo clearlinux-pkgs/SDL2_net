@@ -4,20 +4,15 @@
 #
 Name     : SDL2_net
 Version  : 2.0.1
-Release  : 11
+Release  : 12
 URL      : https://www.libsdl.org/projects/SDL_net/release/SDL2_net-2.0.1.tar.gz
 Source0  : https://www.libsdl.org/projects/SDL_net/release/SDL2_net-2.0.1.tar.gz
 Summary  : SDL portable network library
 Group    : Development/Tools
 License  : Zlib
-Requires: SDL2_net-lib
+Requires: SDL2_net-lib = %{version}-%{release}
+Requires: SDL2_net-license = %{version}-%{release}
 BuildRequires : SDL2-dev
-BuildRequires : SDL2-dev32
-BuildRequires : gcc-dev32
-BuildRequires : gcc-libgcc32
-BuildRequires : gcc-libstdc++32
-BuildRequires : glibc-dev32
-BuildRequires : glibc-libc32
 
 %description
 This is a portable network library for use with SDL.
@@ -25,76 +20,54 @@ This is a portable network library for use with SDL.
 %package dev
 Summary: dev components for the SDL2_net package.
 Group: Development
-Requires: SDL2_net-lib
-Provides: SDL2_net-devel
+Requires: SDL2_net-lib = %{version}-%{release}
+Provides: SDL2_net-devel = %{version}-%{release}
 
 %description dev
 dev components for the SDL2_net package.
 
 
-%package dev32
-Summary: dev32 components for the SDL2_net package.
-Group: Default
-Requires: SDL2_net-lib32
-Requires: SDL2_net-dev
-
-%description dev32
-dev32 components for the SDL2_net package.
-
-
 %package lib
 Summary: lib components for the SDL2_net package.
 Group: Libraries
+Requires: SDL2_net-license = %{version}-%{release}
 
 %description lib
 lib components for the SDL2_net package.
 
 
-%package lib32
-Summary: lib32 components for the SDL2_net package.
+%package license
+Summary: license components for the SDL2_net package.
 Group: Default
 
-%description lib32
-lib32 components for the SDL2_net package.
+%description license
+license components for the SDL2_net package.
 
 
 %prep
 %setup -q -n SDL2_net-2.0.1
-pushd ..
-cp -a SDL2_net-2.0.1 build32
-popd
 
 %build
+export http_proxy=http://127.0.0.1:9/
+export https_proxy=http://127.0.0.1:9/
+export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C
+export SOURCE_DATE_EPOCH=1541027859
 %configure --disable-static
-make V=1  %{?_smp_mflags}
+make  %{?_smp_mflags}
 
-pushd ../build32/
-export PKG_CONFIG_PATH="/usr/lib32/pkgconfig"
-export CFLAGS="$CFLAGS -m32"
-export CXXFLAGS="$CXXFLAGS -m32"
-export LDFLAGS="$LDFLAGS -m32"
-%configure --disable-static   --libdir=/usr/lib32 --build=i686-generic-linux-gnu --host=i686-generic-linux-gnu --target=i686-clr-linux-gnu
-make V=1  %{?_smp_mflags}
-popd
 %check
 export LANG=C
 export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
-export no_proxy=localhost
+export no_proxy=localhost,127.0.0.1,0.0.0.0
 make VERBOSE=1 V=1 %{?_smp_mflags} check
 
 %install
+export SOURCE_DATE_EPOCH=1541027859
 rm -rf %{buildroot}
-pushd ../build32/
-%make_install32
-if [ -d  %{buildroot}/usr/lib32/pkgconfig ]
-then
-pushd %{buildroot}/usr/lib32/pkgconfig
-for i in *.pc ; do ln -s $i 32$i ; done
-popd
-fi
-popd
+mkdir -p %{buildroot}/usr/share/package-licenses/SDL2_net
+cp COPYING.txt %{buildroot}/usr/share/package-licenses/SDL2_net/COPYING.txt
 %make_install
 
 %files
@@ -106,18 +79,11 @@ popd
 /usr/lib64/libSDL2_net.so
 /usr/lib64/pkgconfig/SDL2_net.pc
 
-%files dev32
-%defattr(-,root,root,-)
-/usr/lib32/libSDL2_net.so
-/usr/lib32/pkgconfig/32SDL2_net.pc
-/usr/lib32/pkgconfig/SDL2_net.pc
-
 %files lib
 %defattr(-,root,root,-)
 /usr/lib64/libSDL2_net-2.0.so.0
 /usr/lib64/libSDL2_net-2.0.so.0.0.1
 
-%files lib32
-%defattr(-,root,root,-)
-/usr/lib32/libSDL2_net-2.0.so.0
-/usr/lib32/libSDL2_net-2.0.so.0.0.1
+%files license
+%defattr(0644,root,root,0755)
+/usr/share/package-licenses/SDL2_net/COPYING.txt
