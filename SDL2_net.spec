@@ -4,10 +4,10 @@
 #
 Name     : SDL2_net
 Version  : 2.0.1
-Release  : 13
+Release  : 14
 URL      : https://www.libsdl.org/projects/SDL_net/release/SDL2_net-2.0.1.tar.gz
 Source0  : https://www.libsdl.org/projects/SDL_net/release/SDL2_net-2.0.1.tar.gz
-Summary  : SDL portable network library
+Summary  : A small sample cross-platform networking library (Version 2)
 Group    : Development/Tools
 License  : Zlib
 Requires: SDL2_net-lib = %{version}-%{release}
@@ -28,6 +28,7 @@ Summary: dev components for the SDL2_net package.
 Group: Development
 Requires: SDL2_net-lib = %{version}-%{release}
 Provides: SDL2_net-devel = %{version}-%{release}
+Requires: SDL2_net = %{version}-%{release}
 
 %description dev
 dev components for the SDL2_net package.
@@ -80,7 +81,14 @@ export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C
-export SOURCE_DATE_EPOCH=1546436269
+export SOURCE_DATE_EPOCH=1557076092
+export AR=gcc-ar
+export RANLIB=gcc-ranlib
+export NM=gcc-nm
+export CFLAGS="$CFLAGS -O3 -ffat-lto-objects -flto=4 "
+export FCFLAGS="$CFLAGS -O3 -ffat-lto-objects -flto=4 "
+export FFLAGS="$CFLAGS -O3 -ffat-lto-objects -flto=4 "
+export CXXFLAGS="$CXXFLAGS -O3 -ffat-lto-objects -flto=4 "
 %configure --disable-static
 make  %{?_smp_mflags}
 
@@ -103,7 +111,7 @@ cd ../build32;
 make VERBOSE=1 V=1 %{?_smp_mflags} check || :
 
 %install
-export SOURCE_DATE_EPOCH=1546436269
+export SOURCE_DATE_EPOCH=1557076092
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/package-licenses/SDL2_net
 cp COPYING.txt %{buildroot}/usr/share/package-licenses/SDL2_net/COPYING.txt
