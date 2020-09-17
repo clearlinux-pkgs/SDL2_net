@@ -4,7 +4,7 @@
 #
 Name     : SDL2_net
 Version  : 2.0.1
-Release  : 16
+Release  : 17
 URL      : https://www.libsdl.org/projects/SDL_net/release/SDL2_net-2.0.1.tar.gz
 Source0  : https://www.libsdl.org/projects/SDL_net/release/SDL2_net-2.0.1.tar.gz
 Summary  : SDL portable network library
@@ -12,13 +12,8 @@ Group    : Development/Tools
 License  : Zlib
 Requires: SDL2_net-lib = %{version}-%{release}
 Requires: SDL2_net-license = %{version}-%{release}
-BuildRequires : SDL2-dev32
-BuildRequires : gcc-dev32
-BuildRequires : gcc-libgcc32
-BuildRequires : gcc-libstdc++32
-BuildRequires : glibc-dev32
-BuildRequires : glibc-libc32
 BuildRequires : pkg-config
+BuildRequires : pkgconfig(sdl2)
 
 %description
 This is a portable network library for use with SDL.
@@ -34,16 +29,6 @@ Requires: SDL2_net = %{version}-%{release}
 dev components for the SDL2_net package.
 
 
-%package dev32
-Summary: dev32 components for the SDL2_net package.
-Group: Default
-Requires: SDL2_net-lib32 = %{version}-%{release}
-Requires: SDL2_net-dev = %{version}-%{release}
-
-%description dev32
-dev32 components for the SDL2_net package.
-
-
 %package lib
 Summary: lib components for the SDL2_net package.
 Group: Libraries
@@ -51,15 +36,6 @@ Requires: SDL2_net-license = %{version}-%{release}
 
 %description lib
 lib components for the SDL2_net package.
-
-
-%package lib32
-Summary: lib32 components for the SDL2_net package.
-Group: Default
-Requires: SDL2_net-license = %{version}-%{release}
-
-%description lib32
-lib32 components for the SDL2_net package.
 
 
 %package license
@@ -72,59 +48,37 @@ license components for the SDL2_net package.
 
 %prep
 %setup -q -n SDL2_net-2.0.1
-pushd ..
-cp -a SDL2_net-2.0.1 build32
-popd
+cd %{_builddir}/SDL2_net-2.0.1
 
 %build
 export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C.UTF-8
-export SOURCE_DATE_EPOCH=1568876121
+export SOURCE_DATE_EPOCH=1600307410
 export GCC_IGNORE_WERROR=1
 export AR=gcc-ar
 export RANLIB=gcc-ranlib
 export NM=gcc-nm
 export CFLAGS="$CFLAGS -O3 -ffat-lto-objects -flto=4 "
-export FCFLAGS="$CFLAGS -O3 -ffat-lto-objects -flto=4 "
-export FFLAGS="$CFLAGS -O3 -ffat-lto-objects -flto=4 "
+export FCFLAGS="$FFLAGS -O3 -ffat-lto-objects -flto=4 "
+export FFLAGS="$FFLAGS -O3 -ffat-lto-objects -flto=4 "
 export CXXFLAGS="$CXXFLAGS -O3 -ffat-lto-objects -flto=4 "
 %configure --disable-static
 make  %{?_smp_mflags}
 
-pushd ../build32/
-export PKG_CONFIG_PATH="/usr/lib32/pkgconfig"
-export ASFLAGS="${ASFLAGS}${ASFLAGS:+ }--32"
-export CFLAGS="${CFLAGS}${CFLAGS:+ }-m32 -mstackrealign"
-export CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-m32 -mstackrealign"
-export LDFLAGS="${LDFLAGS}${LDFLAGS:+ }-m32 -mstackrealign"
-%configure --disable-static    --libdir=/usr/lib32 --build=i686-generic-linux-gnu --host=i686-generic-linux-gnu --target=i686-clr-linux-gnu
-make  %{?_smp_mflags}
-popd
 %check
 export LANG=C.UTF-8
 export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
-make VERBOSE=1 V=1 %{?_smp_mflags} check
-cd ../build32;
-make VERBOSE=1 V=1 %{?_smp_mflags} check || :
+make %{?_smp_mflags} check
 
 %install
-export SOURCE_DATE_EPOCH=1568876121
+export SOURCE_DATE_EPOCH=1600307410
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/package-licenses/SDL2_net
-cp COPYING.txt %{buildroot}/usr/share/package-licenses/SDL2_net/COPYING.txt
-pushd ../build32/
-%make_install32
-if [ -d  %{buildroot}/usr/lib32/pkgconfig ]
-then
-pushd %{buildroot}/usr/lib32/pkgconfig
-for i in *.pc ; do ln -s $i 32$i ; done
-popd
-fi
-popd
+cp %{_builddir}/SDL2_net-2.0.1/COPYING.txt %{buildroot}/usr/share/package-licenses/SDL2_net/da026fc4ff9b22834066c2e7510ee2dadc670c4b
 %make_install
 
 %files
@@ -136,22 +90,11 @@ popd
 /usr/lib64/libSDL2_net.so
 /usr/lib64/pkgconfig/SDL2_net.pc
 
-%files dev32
-%defattr(-,root,root,-)
-/usr/lib32/libSDL2_net.so
-/usr/lib32/pkgconfig/32SDL2_net.pc
-/usr/lib32/pkgconfig/SDL2_net.pc
-
 %files lib
 %defattr(-,root,root,-)
 /usr/lib64/libSDL2_net-2.0.so.0
 /usr/lib64/libSDL2_net-2.0.so.0.0.1
 
-%files lib32
-%defattr(-,root,root,-)
-/usr/lib32/libSDL2_net-2.0.so.0
-/usr/lib32/libSDL2_net-2.0.so.0.0.1
-
 %files license
 %defattr(0644,root,root,0755)
-/usr/share/package-licenses/SDL2_net/COPYING.txt
+/usr/share/package-licenses/SDL2_net/da026fc4ff9b22834066c2e7510ee2dadc670c4b
